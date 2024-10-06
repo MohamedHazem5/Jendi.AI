@@ -1,6 +1,9 @@
-﻿using Jendi.AI.Services.IServices;
-using Newtonsoft.Json;
+﻿using Jendi.AI.Models.Request;
+using Jendi.AI.Models.Response;
+using Jendi.AI.Services.IServices;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Web;
 
 namespace Jendi.AI.Services
@@ -13,7 +16,43 @@ namespace Jendi.AI.Services
         {
             _httpClient = httpClient;
         }
+        public async Task<ProfileAnalysisResponse> GetProfileAnalysisAsync(AnalysisRequest request, string bearerToken)
+        {
+            var requestUri = "https://sandbox-api.sahha.ai/api/v1/profile/analysis";
 
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(requestUri, content);
+            response.EnsureSuccessStatusCode();
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ProfileAnalysisResponse>(responseContent);
+        }
+
+        public async Task<IEnumerable<Inference>> GetSleepBiomarkersAsync(AnalysisRequest request, string bearerToken)
+        {
+            var analysisResponse = await GetProfileAnalysisAsync(request, bearerToken);
+            return analysisResponse.Inferences
+                .Where(inference => inference.Type.Equals("sleep", StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<IEnumerable<Inference>> GetStressBiomarkersAsync(AnalysisRequest request, string bearerToken)
+        {
+            var analysisResponse = await GetProfileAnalysisAsync(request, bearerToken);
+            return analysisResponse.Inferences
+                .Where(inference => inference.Type.Equals("stress", StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<IEnumerable<Inference>> GetWellbeingBiomarkersAsync(AnalysisRequest request, string bearerToken)
+        {
+            var analysisResponse = await GetProfileAnalysisAsync(request, bearerToken);
+            return analysisResponse.Inferences
+                .Where(inference => inference.Type.Equals("wellbeing", StringComparison.OrdinalIgnoreCase));
+        }
         public async Task<object> GetHeartRateAsync(string bearerToken)
         {
             return await GetBiomarkerDataAsync(bearerToken, new[] { "heart_rate" }, new[] { "activity" });
@@ -100,7 +139,7 @@ namespace Jendi.AI.Services
                 };
             }
 
-            return JsonConvert.DeserializeObject<object>(responseContent);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<object>(responseContent);
         }
     }
 }

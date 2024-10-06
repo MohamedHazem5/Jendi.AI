@@ -1,5 +1,6 @@
 ﻿using Jendi.AI.Controllers;
-using Jendi.AI.Models;
+using Jendi.AI.Models.Response;
+using Jendi.AI.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;

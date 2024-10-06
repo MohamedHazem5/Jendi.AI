@@ -1,4 +1,4 @@
-﻿namespace Jendi.AI.Models
+﻿namespace Jendi.AI.Settings
 {
     public class SahhaKeys
     {

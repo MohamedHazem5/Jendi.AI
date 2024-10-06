@@ -1,9 +1,11 @@
-﻿using Jendi.AI.Services;
+﻿using Jendi.AI.Models.Request;
+using Jendi.AI.Models.Response;
+using Jendi.AI.Services;
 using Jendi.AI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using System.Web;
+using System.Text;
+using System.Text.Json;
 
 namespace Jendi.AI.Controllers
 {
@@ -12,12 +14,129 @@ namespace Jendi.AI.Controllers
     public class BiomarkersController : ControllerBase
     {
         private readonly IBiomarkerService _biomarkerService;
+        private readonly HttpClient _httpClient;
 
-        public BiomarkersController(IBiomarkerService biomarkerService)
+        public BiomarkersController(IBiomarkerService biomarkerService, HttpClient httpClient)
         {
             _biomarkerService = biomarkerService;
+            _httpClient = httpClient;
+        }
+        /// <summary>
+        /// Retrieves sleep-related biomarkers based on the provided request parameters.
+        /// </summary>
+        /// <param name="request">The request object containing the analysis parameters.</param>
+        /// <returns>A JSON object containing sleep-related analysis inferences.</returns>
+        /// <remarks>
+        /// ### Example Request Body
+        /// ```json
+        /// {
+        ///   "startDateTime": "2024-10-01T00:00:00+12:00",
+        ///   "endDateTime": "2024-10-06T00:00:00+12:00"
+        /// }
+        /// ```
+        /// ### Expected Response
+        /// - **200 OK**: Returns the sleep analysis inferences successfully.
+        /// - **401 Unauthorized**: If the bearer token is missing or invalid.
+        /// - **500 Internal Server Error**: If an error occurs while contacting the external API.
+        /// </remarks>
+
+        [HttpPost("biomarkers/sleep")]
+        public async Task<IActionResult> GetSleepBiomarkers([FromBody] AnalysisRequest request)
+        {
+            var bearerToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return Unauthorized("Bearer token is required.");
+            }
+
+            try
+            {
+                var sleepInferences = await _biomarkerService.GetSleepBiomarkersAsync(request, bearerToken);
+                return Ok(new ProfileAnalysisResponse { Inferences = sleepInferences.ToList() });
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Error contacting the external API: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Retrieves Stress-related biomarkers based on the provided request parameters.
+        /// </summary>
+        /// <param name="request">The request object containing the analysis parameters.</param>
+        /// <returns>A JSON object containing Stress-related analysis inferences.</returns>
+        /// <remarks>
+        /// ### Example Request Body
+        /// ```json
+        /// {
+        ///   "startDateTime": "2024-10-01T00:00:00+12:00",
+        ///   "endDateTime": "2024-10-06T00:00:00+12:00"
+        /// }
+        /// ```
+        /// ### Expected Response
+        /// - **200 OK**: Returns the Stress inferences successfully.
+        /// - **401 Unauthorized**: If the bearer token is missing or invalid.
+        /// - **500 Internal Server Error**: If an error occurs while contacting the external API.
+        /// </remarks>
+        [HttpPost("biomarkers/stress")]
+        public async Task<IActionResult> GetStressBiomarkers([FromBody] AnalysisRequest request)
+        {
+            var bearerToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return Unauthorized("Bearer token is required.");
+            }
+
+            try
+            {
+                var stressInferences = await _biomarkerService.GetStressBiomarkersAsync(request, bearerToken);
+                return Ok(new ProfileAnalysisResponse { Inferences = stressInferences.ToList() });
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Error contacting the external API: {ex.Message}");
+            }
         }
 
+        /// <summary>
+        /// Retrieves wellbeing-related biomarkers based on the provided request parameters.
+        /// </summary>
+        /// <param name="request">The request object containing the analysis parameters.</param>
+        /// <returns>A JSON object containing wellbeing-related analysis inferences.</returns>
+        /// <remarks>
+        /// ### Example Request Body
+        /// ```json
+        /// {
+        ///   "startDateTime": "2024-10-01T00:00:00+12:00",
+        ///   "endDateTime": "2024-10-06T00:00:00+12:00"
+        /// }
+        /// ```
+        /// ### Expected Response
+        /// - **200 OK**: Returns the wellbeing analysis inferences successfully.
+        /// - **401 Unauthorized**: If the bearer token is missing or invalid.
+        /// - **500 Internal Server Error**: If an error occurs while contacting the external API.
+        /// </remarks>
+        [HttpPost("biomarkers/wellbeing")]
+        public async Task<IActionResult> GetWellbeingBiomarkers([FromBody] AnalysisRequest request)
+        {
+            var bearerToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return Unauthorized("Bearer token is required.");
+            }
+
+            try
+            {
+                var wellbeingInferences = await _biomarkerService.GetWellbeingBiomarkersAsync(request, bearerToken);
+                return Ok(new ProfileAnalysisResponse { Inferences = wellbeingInferences.ToList() });
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Error contacting the external API: {ex.Message}");
+            }
+        }
         /// <summary>
         /// Retrieves the user's heart rate data using an authentication token.
         /// </summary>
@@ -181,5 +300,47 @@ namespace Jendi.AI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+        /*        /// <summary>
+          /// Retrieves profile analysis based on the specified date range.
+          /// </summary>
+          /// <param name="request">The request object containing start and end date.</param>
+          /// <returns>A JSON object containing analysis inferences.</returns>
+          /// <remarks>
+          /// ### Example Request Body
+          /// ```json
+          /// {
+          ///   "startDateTime": "2024-10-01T00:00:00+12:00",
+          ///   "endDateTime": "2024-10-06T00:00:00+12:00"
+          /// }
+          /// ```
+          /// ### Expected Response
+          /// - **200 OK**: Returns the analysis inferences successfully.
+          /// - **400 Bad Request**: If the request body is invalid.
+          /// - **401 Unauthorized**: If the bearer token is missing or invalid.
+          /// - **500 Internal Server Error**: If an unexpected error occurs while processing the request.
+          /// </remarks>
+          [HttpPost("analysis")]
+          public async Task<IActionResult> GetProfileAnalysis([FromBody] AnalysisRequest request)
+          {
+              var bearerToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+
+              if (string.IsNullOrEmpty(bearerToken))
+              {
+                  return Unauthorized("Bearer token is required.");
+              }
+
+              try
+              {
+                  var analysisResponse = await _biomarkerService.GetProfileAnalysisAsync(request, bearerToken);
+                  return Ok(analysisResponse);
+              }
+              catch (HttpRequestException ex)
+              {
+                  return StatusCode(500, $"Error contacting the external API: {ex.Message}");
+              }
+          }*/
     }
 }
+

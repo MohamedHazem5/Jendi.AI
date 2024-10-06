@@ -1,4 +1,4 @@
-﻿using Jendi.AI.Models;
+﻿using Jendi.AI.Models.Request;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;

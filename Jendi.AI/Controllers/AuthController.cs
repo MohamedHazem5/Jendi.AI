@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
-using Jendi.AI.Models;
+using Jendi.AI.Models.Request;
 
 namespace Jendi.AI.Controllers
 {
@@ -42,11 +42,11 @@ namespace Jendi.AI.Controllers
         /// 
         /// ```json
         /// {
-        ///   "ExternalId": "aD7ymJCF21MJbOSMBBaqp5j74bC2"
+        ///   "ExternalId": "aSJendiF21MJbOSMBBaqp5j74bC2"
         /// }
         /// ```
         /// This External ID represents a user test profile, while a sample profile from Sahha is represented by:
-        /// - **External ID**: `aSJendiF21MJbOSMBBaqp5j74bC2`
+        /// - **Sample From Sohha External ID**: `aSJendiF21MJbOSMBBaqp5j74bC2`
         /// - **My External ID**: `aD7ymJCF21MJbOSMBBaqp5j74bC2`
         ///
         /// ### Expected Response

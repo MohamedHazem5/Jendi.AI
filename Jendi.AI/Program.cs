@@ -1,6 +1,6 @@
-using Jendi.AI.Models;
 using Jendi.AI.Services;
 using Jendi.AI.Services.IServices;
+using Jendi.AI.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Reflection;

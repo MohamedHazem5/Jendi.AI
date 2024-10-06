@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Jendi.AI.Models
+namespace Jendi.AI.Models.Request
 {
     public class RegisterProfileRequest
     {

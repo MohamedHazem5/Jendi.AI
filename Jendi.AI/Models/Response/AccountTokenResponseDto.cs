@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Jendi.AI.Models
+namespace Jendi.AI.Models.Response
 {
     public class AccountTokenResponseDto
     {
