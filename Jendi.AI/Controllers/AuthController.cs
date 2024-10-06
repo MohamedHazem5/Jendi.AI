@@ -143,7 +143,7 @@ namespace Jendi.AI.Controllers
                 if (string.IsNullOrWhiteSpace(responseContent) || responseContent == "[]")
                 {
                     // Log or return a message indicating the data is empty
-                    return Ok("No biomarkers found for the given parameters.");
+                    return Ok("No Data found for the given ExternalId.");
                 }
 
                 var profileData = JsonSerializer.Deserialize<object>(responseContent);

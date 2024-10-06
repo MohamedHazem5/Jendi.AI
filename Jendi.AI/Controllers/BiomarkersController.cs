@@ -14,12 +14,10 @@ namespace Jendi.AI.Controllers
     public class BiomarkersController : ControllerBase
     {
         private readonly IBiomarkerService _biomarkerService;
-        private readonly HttpClient _httpClient;
 
         public BiomarkersController(IBiomarkerService biomarkerService, HttpClient httpClient)
         {
             _biomarkerService = biomarkerService;
-            _httpClient = httpClient;
         }
         /// <summary>
         /// Retrieves sleep-related biomarkers based on the provided request parameters.

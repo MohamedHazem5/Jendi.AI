@@ -134,7 +134,7 @@ namespace Jendi.AI.Services
             {
                 return new
                 {
-                    Message = "No biomarkers found for the given parameters.",
+                    Message = "No biomarkers found for the given ExternalId.",
                     Body = response.Content.ReadAsStringAsync().Result
                 };
             }
