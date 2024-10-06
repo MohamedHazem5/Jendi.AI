@@ -1,6 +1,9 @@
 using Jendi.AI.Models;
 using Jendi.AI.Services;
+using Jendi.AI.Services.IServices;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<SahhaAuthService>();
 builder.Services.AddHttpClient<ProfileService>();
+builder.Services.AddHttpClient<IBiomarkerService, BiomarkerService>();
 
 builder.Services.Configure<SahhaKeys>(builder.Configuration.GetSection("SahhaKeys"));
 
@@ -17,6 +21,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSwaggerGen(c =>
 {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
     // Add authorization header support
@@ -50,12 +57,17 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+
+app.UseCors(policy => policy.AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .SetIsOriginAllowed(origin => true)
+                            .AllowCredentials());
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BakarAPI v1");
+});
 
 app.UseHttpsRedirection();
 

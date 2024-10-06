@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Jendi.AI.Models;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -30,24 +31,7 @@ namespace Jendi.AI.Services
             return version;
         }
 
-        public async Task<string> GetWellbeingScoresAsync(string token, string types, string startDateTime, string endDateTime, int version = 1)
-        {
-            // Set up the request URL with query parameters 
-            var requestUrl = $" https://sandbox-api.sahha.ai/api/v1/profile/score?types={types}&startDateTime={startDateTime}&endDateTime={endDateTime}&version={version}";
-
-            // Create a new HttpRequestMessage to add the Authorization header
-            var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-            request.Headers.Add("Authorization", $"Bearer {token}");
-
-            // Send the request and get the response
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            // Read and return the response content as a string
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        public async Task<string> RegisterProfileAsync(string externalId, string token)
+        public async Task<RegisterTokenDto> RegisterProfileAsync(string externalId, string token)
         {
             var requestBody = new
             {
@@ -63,7 +47,9 @@ namespace Jendi.AI.Services
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                return responseBody; // You can parse the response into a class if needed
+                var tokenResponse = JsonConvert.DeserializeObject<RegisterTokenDto>(responseBody);
+
+                return tokenResponse; 
             }
             else
             {
