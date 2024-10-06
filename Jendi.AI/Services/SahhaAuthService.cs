@@ -1,4 +1,5 @@
 ﻿using Jendi.AI.Controllers;
+using Jendi.AI.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
@@ -45,20 +46,5 @@ namespace Jendi.AI.Services
             }
         }
 
-    }
-
-    public class AccountTokenResponseDto
-    {
-        [JsonProperty("accountToken")]
-        public string AccountToken { get; set; }
-
-        [JsonProperty("tokenType")]
-        public string TokenType { get; set; }
-    }
-
-    public class SahhaKeys
-    {
-        public string ClientId { get; set; }
-        public string ClientSecret { get; set; }
     }
 }

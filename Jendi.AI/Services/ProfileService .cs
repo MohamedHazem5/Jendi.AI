@@ -1,15 +1,14 @@
-﻿using Jendi.AI.Services.IServices;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
 namespace Jendi.AI.Services
 {
-    public class SahhaService : ISahhaService
+    public class ProfileService 
     {
         private readonly HttpClient _httpClient;
 
-        public SahhaService(HttpClient httpClient)
+        public ProfileService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -47,7 +46,6 @@ namespace Jendi.AI.Services
             // Read and return the response content as a string
             return await response.Content.ReadAsStringAsync();
         }
-
 
         public async Task<string> RegisterProfileAsync(string externalId, string token)
         {

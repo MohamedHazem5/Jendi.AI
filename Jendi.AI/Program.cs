@@ -1,21 +1,13 @@
+using Jendi.AI.Models;
 using Jendi.AI.Services;
-using Jendi.AI.Services.IServices;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddHttpClient();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddHttpClient<SahhaApiService>();
 builder.Services.AddHttpClient<SahhaAuthService>();
-builder.Services.AddHttpClient<SahhaIntegrationService>();
-builder.Services.AddHttpClient<ISahhaService, SahhaService>();
+builder.Services.AddHttpClient<ProfileService>();
 
 builder.Services.Configure<SahhaKeys>(builder.Configuration.GetSection("SahhaKeys"));
 
@@ -68,7 +60,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseAuthentication();
 
 app.MapControllers();
 
